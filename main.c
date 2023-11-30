@@ -3,17 +3,26 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+int num_of_processes = 0;
+int num_of_resources = 0;
 int** allocation;
 int** available;
 int* max;
+
+void print_matrix(int** matrix) {
+    for (int i = 0; i < num_of_processes; ++i) {
+        for (int j = 0; j < num_of_resources; ++j) {
+            printf("%d |", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
 
 void initialize() {
     FILE *fp = fopen("input.txt", "r");
     char c = fgetc(fp);
 
     // determine num of resources and processes
-    int num_of_resources = 0;
-    int num_of_processes = 0;
     int done_counting_resources = 0;
     while (c != '-'){
         if (!done_counting_resources && isdigit(c))
@@ -48,17 +57,16 @@ void initialize() {
     while (c != '-' && !feof(fp)) {
         if (is_allocation && isdigit(c)) {
             allocation[p_num][r_num] = (c - '0');
+            ++r_num;
         }
         else if (isdigit(c)) {
             available[p_num][r_num] = (c - '0');
+            ++r_num;
         }
         
         if (c == '|') {
             is_allocation = !is_allocation;
             r_num = 0;
-        }
-        else {
-            ++r_num;
         }
         
         if (c == '\n')
@@ -67,14 +75,19 @@ void initialize() {
         c = fgetc(fp);
     }
 
-    while (!feof(fp)) {
+    /* while (!feof(fp)) { */
         
-        c = fgetc(fp);
-    }
+    /*     c = fgetc(fp); */
+    /* } */
     
     fclose(fp);
 }
 
 int main (int argc, char** argv) {
     initialize();
+    printf("Available matrix\n");
+    print_matrix(available);
+
+    /* printf("Allocation matrix\n"); */
+    /* print_matrix(allocation); */
 }
