@@ -44,11 +44,12 @@ void initialize() {
     int is_allocation = 0;
     int p_num = 0;
     int r_num = 0;
+    c = fgetc(fp);
     while (c != '-' && !feof(fp)) {
-        if (is_allocation) {
+        if (is_allocation && isdigit(c)) {
             allocation[p_num][r_num] = (c - '0');
         }
-        else {
+        else if (isdigit(c)) {
             available[p_num][r_num] = (c - '0');
         }
         
@@ -63,6 +64,11 @@ void initialize() {
         if (c == '\n')
             ++p_num;
 
+        c = fgetc(fp);
+    }
+
+    while (!feof(fp)) {
+        
         c = fgetc(fp);
     }
     
