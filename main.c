@@ -62,7 +62,7 @@ void initialize() {
     available = malloc(sizeof(int) * num_of_resources);
     
     // initialize max and allocation matrices
-    int is_allocation = 0;
+    int is_allocation = 1;
     int p_num = 0;
     int r_num = 0;
     c = fgetc(fp);
