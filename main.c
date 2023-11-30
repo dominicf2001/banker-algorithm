@@ -18,6 +18,18 @@ void print_matrix(int** matrix) {
     }
 }
 
+void print_array(int* array) {
+    printf("[");
+    for (int i = 0; i < num_of_resources; ++i) {
+        printf("%d", max[i]);
+        if (i < (num_of_resources - 1)) {
+            printf(", ");
+        }
+    }
+    printf("]");
+    printf("\n");
+}
+
 void initialize() {
     FILE *fp = fopen("input.txt", "r");
     char c = fgetc(fp);
@@ -74,11 +86,16 @@ void initialize() {
 
         c = fgetc(fp);
     }
-
-    /* while (!feof(fp)) { */
+    
+    r_num = 0;
+    while (!feof(fp)) {
+        if (isdigit(c)) {
+            max[r_num] = (c - '0');
+            ++r_num;
+        }
         
-    /*     c = fgetc(fp); */
-    /* } */
+        c = fgetc(fp);
+    }
     
     fclose(fp);
 }
@@ -88,6 +105,11 @@ int main (int argc, char** argv) {
     printf("Available matrix\n");
     print_matrix(available);
 
-    /* printf("Allocation matrix\n"); */
-    /* print_matrix(allocation); */
+    printf("Allocation matrix\n");
+    print_matrix(allocation);
+
+    printf("Max array\n");
+    print_array(max);
+
+    
 }
