@@ -6,8 +6,8 @@
 int num_of_processes = 0;
 int num_of_resources = 0;
 int** allocation;
-int** available;
-int* max;
+int** max;
+int* available;
 
 void print_matrix(int** matrix) {
     for (int i = 0; i < num_of_processes; ++i) {
@@ -21,7 +21,7 @@ void print_matrix(int** matrix) {
 void print_array(int* array) {
     printf("[");
     for (int i = 0; i < num_of_resources; ++i) {
-        printf("%d", max[i]);
+        printf("%d", array[i]);
         if (i < (num_of_resources - 1)) {
             printf(", ");
         }
@@ -55,13 +55,13 @@ void initialize() {
     for (int i = 0; i < num_of_processes; ++i) {
         allocation[i] = malloc(sizeof(int) * num_of_resources);
     }
-    available = malloc(sizeof(int*) * num_of_processes);
+    max = malloc(sizeof(int*) * num_of_processes);
     for (int i = 0; i < num_of_processes; ++i) {
-        available[i] = malloc(sizeof(int) * num_of_resources);
+        max[i] = malloc(sizeof(int) * num_of_resources);
     }
-    max = malloc(sizeof(int) * num_of_resources);
+    available = malloc(sizeof(int) * num_of_resources);
     
-    // initialize available and allocation matrices
+    // initialize max and allocation matrices
     int is_allocation = 0;
     int p_num = 0;
     int r_num = 0;
@@ -72,7 +72,7 @@ void initialize() {
             ++r_num;
         }
         else if (isdigit(c)) {
-            available[p_num][r_num] = (c - '0');
+            max[p_num][r_num] = (c - '0');
             ++r_num;
         }
         
@@ -90,7 +90,7 @@ void initialize() {
     r_num = 0;
     while (!feof(fp)) {
         if (isdigit(c)) {
-            max[r_num] = (c - '0');
+            available[r_num] = (c - '0');
             ++r_num;
         }
         
@@ -102,14 +102,12 @@ void initialize() {
 
 int main (int argc, char** argv) {
     initialize();
-    printf("Available matrix\n");
-    print_matrix(available);
+    printf("Max matrix\n");
+    print_matrix(max);
 
     printf("Allocation matrix\n");
     print_matrix(allocation);
 
-    printf("Max array\n");
-    print_array(max);
-
-    
+    printf("Available array\n");
+    print_array(available);
 }
