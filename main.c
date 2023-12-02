@@ -7,6 +7,7 @@ int num_of_processes = 0;
 int num_of_resources = 0;
 int** allocation;
 int** max;
+int** need;
 int* available;
 
 void print_matrix(int** matrix) {
@@ -59,6 +60,10 @@ void initialize() {
     for (int i = 0; i < num_of_processes; ++i) {
         max[i] = malloc(sizeof(int) * num_of_resources);
     }
+    need = malloc(sizeof(int*) * num_of_processes);
+    for (int i = 0; i < num_of_processes; ++i) {
+        need[i] = malloc(sizeof(int) * num_of_resources);
+    }
     available = malloc(sizeof(int) * num_of_resources);
     
     // initialize max and allocation matrices
@@ -96,6 +101,13 @@ void initialize() {
         
         c = fgetc(fp);
     }
+
+    // initialize need matrix
+    for (int i = 0; i < num_of_processes; ++i){
+        for (int j = 0; j < num_of_resources; ++j){
+            need[i][j] = max[i][j] - allocation[i][j];
+        }
+    }
     
     fclose(fp);
 }
@@ -108,6 +120,20 @@ int main (int argc, char** argv) {
     printf("Allocation matrix\n");
     print_matrix(allocation);
 
+    printf("Need matrix\n");
+    print_matrix(need);
+
     printf("Available array\n");
     print_array(available);
+
+    /* int k = 0; */
+    /* int* safe_sequence = malloc(sizeof(int) * num_of_processes); */
+    /* memset(safe_sequence, 0, num_of_processes); */
+
+    /* int i = 0; */
+    /* while (k != num_of_processes) { */
+    /*     if (!safe_sequence[i] && ) */
+        
+    /*     i = (i + 1) % num_of_processes; */
+    /* } */
 }
