@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -10,20 +11,20 @@ int** max;
 int** need;
 int* available;
 
-void print_matrix(int** matrix) {
-    for (int i = 0; i < num_of_processes; ++i) {
-        for (int j = 0; j < num_of_resources; ++j) {
+void print_matrix(int** matrix, size_t width, size_t height) {
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
             printf("%d |", matrix[i][j]);
         }
         printf("\n");
     }
 }
 
-void print_array(int* array) {
+void print_array(int* array, size_t size) {
     printf("[");
-    for (int i = 0; i < num_of_resources; ++i) {
+    for (int i = 0; i < size; ++i) {
         printf("%d", array[i]);
-        if (i < (num_of_resources - 1)) {
+        if (i < (size - 1)) {
             printf(", ");
         }
     }
@@ -112,28 +113,45 @@ void initialize() {
     fclose(fp);
 }
 
+int array_compare(int* a, int* b) {
+    for (int i = 0; i < num_of_resources; ++i){
+        if (a[i] > b[i]){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int main (int argc, char** argv) {
     initialize();
     printf("Max matrix\n");
-    print_matrix(max);
+    print_matrix(max, num_of_resources, num_of_processes);
 
     printf("Allocation matrix\n");
-    print_matrix(allocation);
+    print_matrix(allocation, num_of_resources, num_of_processes);
 
     printf("Need matrix\n");
-    print_matrix(need);
+    print_matrix(max, num_of_resources, num_of_processes);
 
     printf("Available array\n");
-    print_array(available);
+    print_array(available, num_of_resources);
 
-    /* int k = 0; */
-    /* int* safe_sequence = malloc(sizeof(int) * num_of_processes); */
-    /* memset(safe_sequence, 0, num_of_processes); */
+    int k = 0;
+    int* safe_sequence = malloc(sizeof(int) * num_of_processes);
+    memset(safe_sequence, -1, sizeof(int) * num_of_processes);
 
-    /* int i = 0; */
-    /* while (k != num_of_processes) { */
-    /*     if (!safe_sequence[i] && ) */
+    print_array(safe_sequence, num_of_processes);
+    
+    int p_num = 0;
+    while (k != num_of_processes) {
+        int needLessThanOrEqualAvailable = array_compare(need[p_num], available);
+        if (safe_sequence[p_num] == -1 && needLessThanOrEqualAvailable) {
+            available = need[p_num];
+            safe_sequence[k++] = p_num;
+        }
         
-    /*     i = (i + 1) % num_of_processes; */
-    /* } */
+        p_num = (p_num + 1) % num_of_processes;
+    }
+
+    print_array(safe_sequence, num_of_processes);
 }
