@@ -11,7 +11,7 @@ int** max;
 int** need;
 int* available;
 
-void print_matrix(int** matrix, size_t width, size_t height) {
+void matrix_print(int** matrix, size_t width, size_t height) {
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             printf("%d |", matrix[i][j]);
@@ -20,7 +20,7 @@ void print_matrix(int** matrix, size_t width, size_t height) {
     }
 }
 
-void print_array(int* array, size_t size) {
+void array_print(int* array, size_t size) {
     printf("[");
     for (int i = 0; i < size; ++i) {
         printf("%d", array[i]);
@@ -32,8 +32,26 @@ void print_array(int* array, size_t size) {
     printf("\n");
 }
 
-void initialize() {
-    FILE *fp = fopen("input.txt", "r");
+int array_compare(int* a, int* b, size_t size) {
+    for (int i = 0; i < size; ++i){
+        if (a[i] > b[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int array_contains(int *a, size_t size, int x) {
+    for (int i = 0; i < size; ++i){
+        if (a[i] == x) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void initialize(const char* file_name) {
+    FILE *fp = fopen(file_name, "r");
     char c = fgetc(fp);
 
     // determine num of resources and processes
@@ -113,45 +131,37 @@ void initialize() {
     fclose(fp);
 }
 
-int array_compare(int* a, int* b) {
-    for (int i = 0; i < num_of_resources; ++i){
-        if (a[i] > b[i]){
-            return 0;
-        }
-    }
-    return 1;
-}
-
 int main (int argc, char** argv) {
-    initialize();
-    printf("Max matrix\n");
-    print_matrix(max, num_of_resources, num_of_processes);
+    initialize(argv[1]);
+    
+    /* printf("Max matrix\n"); */
+    /* matrix_print(max, num_of_resources, num_of_processes); */
 
-    printf("Allocation matrix\n");
-    print_matrix(allocation, num_of_resources, num_of_processes);
+    /* printf("Allocation matrix\n"); */
+    /* matrix_print(allocation, num_of_resources, num_of_processes); */
 
-    printf("Need matrix\n");
-    print_matrix(max, num_of_resources, num_of_processes);
+    /* printf("Need matrix\n"); */
+    /* matrix_print(max, num_of_resources, num_of_processes); */
 
-    printf("Available array\n");
-    print_array(available, num_of_resources);
+    /* printf("Available array\n"); */
+    /* array_print(available, num_of_resources); */
 
     int k = 0;
     int* safe_sequence = malloc(sizeof(int) * num_of_processes);
     memset(safe_sequence, -1, sizeof(int) * num_of_processes);
-
-    print_array(safe_sequence, num_of_processes);
     
     int p_num = 0;
     while (k != num_of_processes) {
-        int needLessThanOrEqualAvailable = array_compare(need[p_num], available);
-        if (safe_sequence[p_num] == -1 && needLessThanOrEqualAvailable) {
-            available = need[p_num];
+        int acceptableNeed = array_compare(need[p_num], available, num_of_resources);
+        if (!array_contains(safe_sequence, num_of_processes, p_num) && acceptableNeed) {
+            for (int i = 0; i < num_of_resources; ++i) {
+                available[i] = available[i] + allocation[p_num][i];
+            }
             safe_sequence[k++] = p_num;
         }
-        
         p_num = (p_num + 1) % num_of_processes;
     }
 
-    print_array(safe_sequence, num_of_processes);
+    printf("SAFE SEQUENCE: ");
+    array_print(safe_sequence, num_of_processes);
 }
